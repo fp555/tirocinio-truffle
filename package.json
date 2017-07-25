@@ -1,26 +1,35 @@
 {
-  "name": "tirocinio_truffle",
-  "version": "1.0.0",
-  "description": "App truffle tirocinio",
-  "main": "truffle.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "dev": "lite-server",
-    "test": "truffle test"
-  },
-  "author": "fabiop.",
-  "license": "ISC",
-  "devDependencies": {
-    "lite-server": "^2.3.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/petroccoC/tirocinio_truffle.git"
-  },
-  "bugs": {
-    "url": "https://github.com/petroccoC/tirocinio_truffle/issues"
-  },
-  "homepage": "https://github.com/petroccoC/tirocinio_truffle#readme"
+    "name": "tirocinio_truffle",
+    "version": "1.0.0",
+    "description": "App truffle tirocinio",
+    "main": "truffle.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "dev": "echo \"Sei Claudio? Usa 'npm run devc'; Fabio ha 'npm run devf'\"",
+        "devc": "truffle compile; truffle migrate --network quorum; lite-server",
+        "devf": "truffle compile; truffle migrate --network testrpc; lite-server",
+        "test": "truffle test"
+    },
+    "author": "fabiop.",
+    "license": "null",
+    "dependencies": {
+        "truffle": "^3.4.5"
+    },
+    "devDependencies": {
+        "lite-server": "^2.3.0"
+    },
+    "optionalDependencies": {
+        "ethereumjs-testrpc": "^4.0.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/petroccoC/tirocinio_truffle.git"
+    },
+    "bugs": {
+        "url": "https://github.com/petroccoC/tirocinio_truffle/issues"
+    },
+    "homepage": "https://github.com/petroccoC/tirocinio_truffle#readme",
+    "private": true
 }

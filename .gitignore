@@ -29,9 +29,6 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
-
 # Dependency directories
 node_modules/
 jspm_packages/
@@ -57,8 +54,5 @@ typings/
 # dotenv environment variables file
 .env
 
-# artefatti contratti
+# artefatti di compilazione contratti solidity
 build/
-
-# file diversi tra me e claudio
-truffle.js
