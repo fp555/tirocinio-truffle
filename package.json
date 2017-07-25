@@ -1,19 +1,26 @@
 {
-  "name": "pet-shop",
+  "name": "tirocinio_truffle",
   "version": "1.0.0",
+  "description": "App truffle tirocinio",
   "main": "truffle.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "dev": "truffle compile && truffle migrate && lite-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "lite-server",
+    "test": "truffle test"
   },
-  "author": "",
+  "author": "fabiop.",
   "license": "ISC",
   "devDependencies": {
     "lite-server": "^2.3.0"
   },
-  "dependencies": {},
-  "description": ""
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petroccoC/tirocinio_truffle.git"
+  },
+  "bugs": {
+    "url": "https://github.com/petroccoC/tirocinio_truffle/issues"
+  },
+  "homepage": "https://github.com/petroccoC/tirocinio_truffle#readme"
 }

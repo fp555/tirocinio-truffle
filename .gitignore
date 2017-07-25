@@ -57,5 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
-#build folder contract
+# artefatti contratti
 build/
+
+# file diversi tra me e claudio
+truffle.js
