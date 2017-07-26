@@ -16,10 +16,29 @@ App = {
             var prescriptionsArtifact = data;
             App.contracts.Prescriptions = TruffleContract(prescriptionsArtifact);
             App.contracts.Prescriptions.setProvider(window.web3);
-            // return *il passo successivo dell'applicazione*
+            
         });
         
+        return App.chekRole();
         // return *bindevents per i clic*
+    }
+
+    checkRole: function() {
+
+        var account;
+        web3.eth.getAccounts(function(err,accounts) {
+            if(err) {
+                console.log(err); 
+            } else {
+                account = accounts[0]; 
+            }
+
+        });
+        App.contracts.Prescriptions.deployed().then(function(instance) {
+            return instance.getRole.call(account);
+        }).then(function(result){
+            console.log(result);
+        });
     }
 };
 
