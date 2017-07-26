@@ -40,7 +40,7 @@
                 <label for="Specialization">Specialization:</label>
                 <textarea class="form-control" rows="5" id="specialization"></textarea>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" id="registra" style="visibility: hidden;">Registra</button>
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="registra" style="visibility: hidden;">Registra</button>
         </form>
     </div> <!-- /container -->
 
@@ -57,7 +57,7 @@
             
             $("#registra").click(function(event) {
                 event.preventDefault();
-                console.log(web3);
+                App.registra();
             });
         </script>
 
