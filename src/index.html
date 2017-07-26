@@ -24,52 +24,41 @@
 
 </head>
 <body>
-  <div class="container">
-    <form class="form-signin" id="form-medico">
-      <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ruolo
-          <span class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li><a id="medico">Medico</a></li>
-            <li><a id="farmacista">Farmacista</a></li>
-          </ul>
-        </div>
-        <div class="form-group" style="visibility: hidden;">
-          <label for="usr">Nome:</label>
-          <input type="text" class="form-control" id="nome">
-
-          <div class="form-group">
-            <label for="usr">Cognome:</label>
-            <input type="text" class="form-control" id="cognome">
-
-            <div class="form-group">
-              <label for="Specialization">Specialization:</label>
-              <textarea class="form-control" rows="5" id="specialization"></textarea>
-
+    <div class="container">
+        <form class="form-signin" id="form-medico">
+            <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
+            <select class="form-control" id="roleselect">Ruolo
+                <option value="" selected>--Selezionare il ruolo--</option>
+                <option value="farma">Farmacista</option>
+                <option value="medic">Medico</option>
+            </select>
+            <div class="form-group" style="visibility: hidden;">
+                <label for="usr">Nome:</label>
+                <input type="text" class="form-control" id="nome">
+                <label for="usr">Cognome:</label>
+                <input type="text" class="form-control" id="cognome">
+                <label for="Specialization">Specialization:</label>
+                <textarea class="form-control" rows="5" id="specialization"></textarea>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit" id="registra" style="visibility: hidden;">Registra</button>
-          </form>
-        </div> <!-- /container -->
+        </form>
+    </div> <!-- /container -->
 
 
         <script type="text/javascript">
-          $(document).ready(function() {
-
-            $("#medico").click(function(event) {
-              $(".form-group").css('visibility', 'visible');
-              $("#registra").css('visibility', 'visible');
+            $(document).ready(function() {
+                $("#roleselect").change(function() {
+                    if($("#roleselect").val() === "medic") {
+                        $(".form-group").css('visibility', 'visible');
+                        $("#registra").css('visibility', 'visible');
+                    }
+                });
             });
-
-
-
+            
             $("#registra").click(function(event) {
-              event.preventDefault();
-
-              console.log(web3);
+                event.preventDefault();
+                console.log(web3);
             });
-
-          });
         </script>
 
       </body>

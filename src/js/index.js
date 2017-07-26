@@ -14,7 +14,6 @@ App = {
         // inizializza il contratto
         $.getJSON('Prescriptions.json', function(data) {
             var prescriptionsArtifact = data;
-            console.log(data);
             App.contracts.Prescriptions = TruffleContract(prescriptionsArtifact);
             App.contracts.Prescriptions.setProvider(window.web3);
             // return *il passo successivo dell'applicazione*
