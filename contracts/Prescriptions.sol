@@ -1,8 +1,5 @@
 pragma solidity ^0.4.4;
 
-/**
- * This contract does this and that...
- */
 contract Prescriptions {
 
 	struct InfoMedico {
