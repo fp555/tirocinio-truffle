@@ -1,0 +1,31 @@
+<form class="form-signin" id="form-medico">
+    <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
+        <select class="form-control" id="roleselect">Ruolo
+            <option value="" selected>--Selezionare il ruolo--</option>
+            <option value="farma">Farmacista</option>
+            <option value="medic">Medico</option>
+        </select>
+        <div class="form-group" style="visibility: hidden;">
+            <label for="nome">Nome:</label>
+            <input type="text" class="form-control" id="nome">
+            <label for="cognome">Cognome:</label>
+            <input type="text" class="form-control" id="cognome">
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="registra">Registra</button>
+        </div>
+</form>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#roleselect").change(function() {
+            $(".form-group").css('visibility', ($("#roleselect").val() === "")? 'hidden' : 'visible');
+        });
+    });
+
+    $("#registra").click(function(event) {
+        event.preventDefault();
+        App.registra({
+            nome : $("#nome").val(),
+            cognome : $("#cognome").val(),
+            ruolo : $("#roleselect").val()
+        });
+    });
+</script>

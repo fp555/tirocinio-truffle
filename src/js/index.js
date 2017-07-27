@@ -2,11 +2,9 @@ App = {
     contract: {}, // variabile contratto
     
     init: function() {
-        // inizializza web3
-        if (typeof web3 !== 'undefined') { // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-            // Use Mist/MetaMask's provider
-            window.web3 = new Web3(web3.currentProvider);
-        } else {
+        // Checking if Web3 has been injected by the browser
+        if (typeof web3 !== 'undefined') window.web3 = new Web3(web3.currentProvider); // Use Mist/MetaMask's provider
+        else {
             console.log('No web3? You should consider trying MetaMask!')
             // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
             window.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
@@ -25,19 +23,14 @@ App = {
             return instance.getRole.call();
         }).then(function(role) {
             console.log(role);
-            if(role === "medic" || role === "farma") {
-                $(".container").load('pages/' + role + '.html', function() {
-                    //execute here after load completed
-                });
-            }
+            if(role === "medic" || role === "farma") $(".container").load('pages/' + role + '.html');
+            else $(".container").load('pages/reg.html');
         });
     },
     
     registra: function(form) {
         web3.eth.getAccounts(function(error,accounts) {
-            if(error) {
-                console.log(error);
-            }
+            if(error) console.log(error);
             var account = accounts[0];
             App.contract.deployed().then(function(instance) {
                 return instance.setMedico(form.nome, form.cognome, form.ruolo, {from: account});
