@@ -1,23 +1,20 @@
 App = {
     contract: {}, // variabile contratto
-    web3Provider: null,
     
     init: function() {
         // inizializza web3
         if (typeof web3 !== 'undefined') { // Checking if Web3 has been injected by the browser (Mist/MetaMask)
             // Use Mist/MetaMask's provider
-            App.web3Provider = web3.currentProvider;
-            web3 = new Web3(web3.currentProvider);
+            window.web3 = new Web3(web3.currentProvider);
         } else {
             console.log('No web3? You should consider trying MetaMask!')
             // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-            App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
-            web3 = new Web3(App.web3Provider);
+            window.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
         }
         // inizializza il contratto
         $.getJSON('Prescriptions.json', function(data) {
             App.contract.Prescriptions = TruffleContract(data);
-            App.contract.Prescriptions.setProvider(App.web3Provider);
+            App.contract.Prescriptions.setProvider(web3.currentProvider);
         }).then(function() {
             return App.checkRole();
         });
@@ -38,8 +35,8 @@ App = {
             }
             var account = accounts[0];
             App.contract.Prescriptions.deployed().then(function(instance) {
-                return instance.setMedico(form.nome, form.cognome, form.specializzazione, form.ruolo,{from: account});
-            }).then(function(){
+                return instance.setMedico(form.nome, form.cognome, form.specializzazione, form.ruolo, {from: account});
+            }).then(function() {
                 App.contract.Prescriptions.deployed().then(function(instance) {
                     return instance.getMedico.call();
                 }).then(function(info){
