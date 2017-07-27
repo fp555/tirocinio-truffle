@@ -1,58 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
-  <title>Signin Template for Bootstrap</title>
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <!-- Optional Bootstrap theme -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-  
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-  <script src="js/web3.min.js"></script> <!-- Libreria web3 -->
-  <script src="js/truffle-contract.js"></script> <!-- Libreria Truffle -->
-  <script src="js/index.js"></script> <!-- La nostra applicazione -->
-
-</head>
-<body>
-  <div class="container">
-    <form class="form-signin" id="form-medico">
-      <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
-      <select class="form-control" id="roleselect">Ruolo
-        <option value="" selected>--Selezionare il ruolo--</option>
-        <option value="farma">Farmacista</option>
-        <option value="medic">Medico</option>
-      </select>
-      <div class="form-group" style="visibility: hidden;">
-        <label for="usr">Nome:</label>
-        <input type="text" class="form-control" id="nome">
-        <label for="usr">Cognome:</label>
-        <input type="text" class="form-control" id="cognome">
-        <label for="Specialization">Specialization:</label>
-        <textarea class="form-control" rows="5" id="specializzazione"></textarea>
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="button" id="registra" style="visibility: hidden;">Registra</button>
-    </form>
-  </div> <!-- /container -->
+<html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../favicon.ico">
+        <title>Signin Template for Bootstrap</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Optional Bootstrap theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+            <form class="form-signin" id="form-medico">
+                <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
+                    <select class="form-control" id="roleselect">Ruolo
+                        <option value="" selected>--Selezionare il ruolo--</option>
+                        <option value="farma">Farmacista</option>
+                        <option value="medic">Medico</option>
+                    </select>
+                    <div class="form-group" style="visibility: hidden;">
+                        <label for="nome">Nome:</label>
+                        <input type="text" class="form-control" id="nome">
+                        <label for="cognome">Cognome:</label>
+                        <input type="text" class="form-control" id="cognome">
+                        <button class="btn btn-lg btn-primary btn-block" type="button" id="registra">Registra</button>
+                    </div>
+            </form>
+        </div> <!-- /container -->
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="js/web3.min.js"></script> <!-- Libreria web3 -->
+        <script src="js/truffle-contract.js"></script> <!-- Libreria Truffle -->
+        <script src="js/index.js"></script> <!-- La nostra applicazione -->
 
 
-  <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function() {
-      $("#roleselect").change(function() {
-        if($("#roleselect").val() === "medic") {
-          $(".form-group").css('visibility', 'visible');
-          $("#registra").css('visibility', 'visible');
-        }
-      });
+        $("#roleselect").change(function() {
+            $(".form-group").css('visibility', ($("#roleselect").val() === "")? 'hidden' : 'visible');
+        });
     });
 
     $("#registra").click(function(event) {
@@ -60,11 +53,11 @@
       App.registra({
         nome : $("#nome").val(),
         cognome : $("#cognome").val(),
-        specializzazione : $("#specializzazione").val(),
         ruolo : $("#roleselect").val()
       });
     });
   </script>
+    
 
 </body>
 </html>

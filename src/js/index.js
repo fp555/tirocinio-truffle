@@ -13,34 +13,40 @@ App = {
         }
         // inizializza il contratto
         $.getJSON('Prescriptions.json', function(data) {
-            App.contract.Prescriptions = TruffleContract(data);
-            App.contract.Prescriptions.setProvider(web3.currentProvider);
+            App.contract = TruffleContract(data);
+            App.contract.setProvider(web3.currentProvider);
         }).then(function() {
             return App.checkRole();
         });
     },
     
     checkRole: function() {
-        App.contract.Prescriptions.deployed().then(function(instance) {
+        App.contract.deployed().then(function(instance) {
             return instance.getRole.call();
         }).then(function(role) {
             console.log(role);
+            if(role === "medic" || role === "farma") {
+                $(".container").load('pages/' + role + '.html', function() {
+                    //execute here after load completed
+                });
+            }
         });
     },
     
     registra: function(form) {
-        web3.eth.getAccounts(function(error,accounts){
+        web3.eth.getAccounts(function(error,accounts) {
             if(error) {
                 console.log(error);
             }
             var account = accounts[0];
-            App.contract.Prescriptions.deployed().then(function(instance) {
-                return instance.setMedico(form.nome, form.cognome, form.specializzazione, form.ruolo, {from: account});
+            App.contract.deployed().then(function(instance) {
+                return instance.setMedico(form.nome, form.cognome, form.ruolo, {from: account});
             }).then(function() {
-                App.contract.Prescriptions.deployed().then(function(instance) {
+                App.contract.deployed().then(function(instance) {
                     return instance.getMedico.call();
                 }).then(function(info){
                     console.log(info);
+                    return App.checkRole();
                 });
             });
         });
