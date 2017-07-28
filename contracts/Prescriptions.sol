@@ -40,18 +40,18 @@ contract Prescriptions {
 
 	//prende ultima ricetta inserita
 	function getLastId() public returns (uint nre) {
-		nre = ricette.length; 
+		nre = ricette.length;
+	}
+
+    //setta solo lo stato di una ricetta
+	function setStatoRicetta(uint8 stato, uint nre) public {
+		stati[ricette[nre]] = StatiRicetta(stato);
 	}
 	
-	//inserisce l'hash della ricetta
-	function setRicetta(bytes32 ricetta) public {
+	//3 parametri: inserisce una nuova ricetta più il suo stato
+	function setRicetta(uint8 stato, uint nre, bytes32 ricetta) public {
 		ricette.push(ricetta);
-	}
-	
-	//associa ad una ricetta lo stato 
-	function setStatoRicetta(uint stato, uint nre) public {
-		bytes32 hash = ricette[nre];
-		stati[hash] = StatiRicetta(stato);
+        setStatoRicetta(stato, nre);
 	}
 	
 }

@@ -4,15 +4,15 @@ App = {
 
     init: function() {
         Object.defineProperty(App.enumStati, "NONEROGATO",{
-            value : 0, 
+            value : 0,
             writable : false
         });
         Object.defineProperty(App.enumStati, "PARZEROGATO",{
-            value : 1, 
+            value : 1,
             writable : false
         });
         Object.defineProperty(App.enumStati, "EROGATO",{
-            value : 2, 
+            value : 2,
             writable : false
         });
 
@@ -47,7 +47,7 @@ App = {
             if(error) console.log(error);
             var account = accounts[0];
             App.contract.deployed().then(function(instance) {
-                return instance.setMedico(form.nome, form.cognome, form.ruolo, {from: account});
+                instance.setMedico(form.nome, form.cognome, form.ruolo, {from: account});
             }).then(function() {
                 App.contract.deployed().then(function(instance) {
                     return instance.getMedico.call();
@@ -61,33 +61,29 @@ App = {
 
     inserisciRicetta : function(event, data) {
         event.preventDefault();
-        var time = Date.now();
         //timestamp ricetta
-        var timestamp = (time - (new Date().getTimezoneOffset() *60000 ));
-        web3.eth.getAccounts(function(error,accounts){
+        var timestamp = (Date.now() - (new Date().getTimezoneOffset() * 60000));
+        web3.eth.getAccounts(function(error,accounts) {
             if(error) console.log(error);
             var account = accounts[0];
-            App.contract.deployed().then(function(instance){
+            App.contract.deployed().then(function(instance) {
                 return instance.getLastId.call();
-            }).then(function(lastid){
-                nre = parseInt(lastid.toString())+1;
-                data = data + '&nre='+nre;
-            }).then(function(){
-                App.contract.deployed().then(function(instance){
+            }).then(function(lastid) {
+                var nre = parseInt(lastid.toString()) + 1;
+                data = data + '&nre=' + nre;
+                App.contract.deployed().then(function(instance) {
                     return instance.getMedico.call();
-                }).then(function(medico){
+                }).then(function(medico) {
                     data = data + '&nome-medico='+medico[0]+ '&cognome-medico='+medico[1]+'&ts='+timestamp;
+                    console.log(data);
                     var hashedData = web3.sha3(data);
+                    console.log(hashedData);
                     App.contract.deployed().then(function(instance){
-                        return instance.setRicetta(hashedData, {from: account});
-                    }).then(function(){
-                        App.contract.deployed().then(function(instance){
-                            return instance.setStatoRicetta(App.enumStati.NONEROGATO, nre, {from: account});
-                        });
+                        return instance.setRicetta(App.enumStati.NONEROGATO, nre - 1,hashedData, {from: account});
                     });
                 });
             });
-        });  
+        });
     }
 };
 

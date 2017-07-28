@@ -10,7 +10,7 @@
         "dev": "echo \"Sei Claudio? Usa 'npm run devc'; Fabio ha 'npm run devf'\"",
         "devc": "truffle compile; truffle migrate --network quorum; lite-server",
         "devf": "truffle compile; truffle migrate --network testrpc; lite-server",
-        "test": "truffle test"
+        "test": "truffle test --network testrpc"
     },
     "author": "fabiop.",
     "license": "null",
