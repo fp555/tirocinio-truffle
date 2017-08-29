@@ -1,6 +1,6 @@
 {
     "name": "tirocinio",
-    "version": "0.1.20",
+    "version": "0.2.0",
     "description": "App tirocinio ricetta bianca dematerializzata",
     "scripts": {
         "dev": "truffle compile && truffle migrate --network testrpc && NODE_ENV=development node server.js",
