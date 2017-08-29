@@ -1,19 +1,20 @@
 pragma solidity ^0.4.4;
 
 contract Prescriptions {
-
 	struct InfoMedico {
 		string name;
 		string surname;
 	}
-
-	//stati ricetta
-	enum StatiRicetta {nonErogato,parzErogato,erogato}
+	enum StatiRicetta {
+        nonErogato, // 0
+        parzErogato, // 1
+        erogato // 2
+    }
 
 	bytes32[] ricette;
 
 	//mapping utente-ruoli
-	mapping (address => string) internal roles ;
+	mapping (address => string) internal roles;
 
 	//mapping accounts-anagrafica
 	mapping (address => InfoMedico) internal medici;
@@ -53,5 +54,4 @@ contract Prescriptions {
 		ricette.push(ricetta);
         setStatoRicetta(stato, nre);
 	}
-	
 }
