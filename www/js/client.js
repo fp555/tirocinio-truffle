@@ -3,13 +3,15 @@ App = {
     contract: {}, // variabile contratto
     socket: io('http://localhost:3000/', {reconnectionAttempts: 1}), // websocket per livereload;
     enumStati: {
-        NONEROGATO: 0,
-        PARZEROGATO: 1,
+        INVALIDO: 0,
+        NONEROGATO: 1,
         EROGATO: 2
     },
+    enumRuoli: ["reg", "reg", "farma", "medic"],
 
     init: function() {
         Object.freeze(App.enumStati); // perché const del javascript è una barzelletta
+        Object.freeze(App.enumRuoli);
         // Checking if Web3 has been injected by the browser
         if(typeof web3 !== 'undefined') web3 = new Web3(web3.currentProvider); // Use Mist/MetaMask's provider
         else {
@@ -33,10 +35,10 @@ App = {
     
     checkRole: function() {
         App.contract.deployed().then(function(instance) {
-            instance.getRole.call({from: App.account}).then(function(role) {
+            instance.getRole.call({from: App.account}).then(function(r) {
+                let role = parseInt(r.toString(10));
                 console.log(role);
-                if(role === "medic" || role === "farma") $(".container").load('/pages/' + role + '.html');
-                else $(".container").load('/pages/reg.html');
+                $(".container").load('/pages/' + App.enumRuoli[role] + '.html');
             });
         });
     },
