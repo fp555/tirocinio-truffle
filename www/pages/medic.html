@@ -1,17 +1,42 @@
-<div class="container">
-	<form class="form-prescrizione" id="prescrizione">
-		<h2 class="form-signin-heading">Inserisci dati ricetta</h2>
-		<div class="form-group">
-			<label for="nome">Nome paziente:</label>
-			<input type="text" class="form-control" id="nome-paziente" name="nome-paziente">
-			<label for="cognome">Cognome paziente:</label>
-			<input type="text" class="form-control" id="cognome-paziente" name="cognome-paziente">
-			<label for="Codice fiscale">Codice fiscale paziente:</label>
-			<input type="text" class="form-control" id="cf-paziente" name="cf-paziente">
-			<label for="Lista farmaci">Lista farmaci:</label>
-			<textarea class="form-control" rows="5" id="lista-farmaci" name="lista-farmaci"></textarea>
-			<br>
-			<button class="btn btn-lg btn-primary btn-block" type="click" id="crea" onclick="App.inserisciRicetta(event, $('#prescrizione').serialize())">Crea</button>
-		</div>
-	</form>
-</div>
+<form class="form-horizontal" id="ricetta" method="post">
+	<div class="form-group">
+	    <label class="col-sm-1 control-label">Medico</label>
+	    <label class="sr-only">Nome e cognome</label>
+        <div class="col-sm-5">
+            <input type="text" class="form-control" id="nome-medico" name="nome-medico" required readonly>
+    	</div>
+    	<label class="sr-only">Account</label>
+    	<div class="col-sm-6">
+            <input type="text" class="form-control" id="acc-medico" name="acc-medico" required readonly>
+    	</div>
+	</div>
+	<fieldset>
+	    <legend>Dati Ricetta</legend>
+	    <div class="form-group">
+    		<label class="col-sm-1 control-label">NRE</label>
+    		<div class="col-sm-2">
+    		    <input type="text" class="form-control" id="nre" name="nre" required readonly>
+    		</div>
+    		<label class="col-sm-3 control-label">Data</label>
+    		<div class="col-sm-6">
+    		    <input type="text" class="form-control" id="data" name="data" required readonly>
+    		</div>
+	    </div>
+    	<div class="form-group">
+    		<label class="sr-only">Nome paziente</label>
+    		<div class="col-sm-6">
+    		    <input type="text" class="form-control" id="nome-paziente" name="nome-paziente" placeholder="Nome paziente" required>
+    		</div>
+    		<label class="sr-only">Nome paziente</label>
+    		<div class="col-sm-6">
+    		    <input type="text" class="form-control" id="cognome-paziente" name="cognome-paziente" placeholder="Cognome paziente" required>
+    		</div>
+    	</div>
+    	<div class="form-group" style="margin: 0 0 15px;">
+    	    <label class="control-label">Prescrizione</label>
+    	    <textarea class="form-control" rows="5" id="prescriz" name="prescriz" required></textarea>
+    	</div>
+	</fieldset>
+	<input class="btn btn-lg btn-primary btn-block" type="submit" value="Crea">
+</form>
+<script src="/js/print.min.js"></script> <!-- Per la stampa PDF -->

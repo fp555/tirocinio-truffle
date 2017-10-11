@@ -1,13 +1,14 @@
 App = {
     account: {}, // account che interagisce con il contratto
-    contract: {}, // variabile contratto
-    socket: io('http://localhost:3000/', {reconnectionAttempts: 1}), // websocket per livereload;
+    contract: {}, // contratto truffle
+    instance: {}, // istanza smart contract su bc
+    enumRuoli: ["guest", "admin", "farma", "medic"],
     enumStati: {
         INVALIDO: 0,
         NONEROGATO: 1,
         EROGATO: 2
     },
-    enumRuoli: ["reg", "reg", "farma", "medic"],
+    socket: io('http://localhost:3000/', {reconnectionAttempts: 1}), // websocket per livereload;
 
     init: function() {
         Object.freeze(App.enumStati); // perché const del javascript è una barzelletta
@@ -22,13 +23,16 @@ App = {
         $.getJSON('/contracts/Prescriptions.json', function(data) {
             App.contract = TruffleContract(data);
             App.contract.setProvider(web3.currentProvider);
+            App.contract.deployed().then(function(i) {
+                App.instance = i;
+            });
         });
         // set account da utilizzare
         web3.eth.getAccounts(function(error,accounts) {
             if(error) console.log(error);
             else {
                 App.account = accounts[0]; // cambia 0 con un altro numero per fare prove multiaccount senza MetaMask
-                return App.checkRole();
+                App.checkRole();
             }
         });
     },
@@ -36,48 +40,44 @@ App = {
     checkRole: function() {
         App.contract.deployed().then(function(instance) {
             instance.getRole.call({from: App.account}).then(function(r) {
-                let role = parseInt(r.toString(10));
-                console.log(role);
-                $(".container").load('/pages/' + App.enumRuoli[role] + '.html');
+                var role = parseInt(r.toString());
+                console.log(App.enumRuoli[role]);
+                $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {
+                    App[App.enumRuoli[role]](); // lo so che non è una cosa bella, ma eval è peggio
+                });
             });
         });
     },
     
     registra: function(form) {
-        var instance;
-        App.contract.deployed().then(function(i) {
-            instance = i;
-            instance.setMedico(form.nome, form.cognome, form.ruolo, {from: App.account}).then(function() {
-                instance.getMedico.call({from: App.account}).then(function(info) {
-                    console.log(info);
-                    App.checkRole();
-                });
+        App.contract.deployed().then(function(instance) {
+            App.instance.setAccount(form.nome, form.cognome, form.ruolo, {from: App.account}).then(function() {
+                App.checkRole();
             });
         });
     },
-
-    inserisciRicetta : function(event, data) {
-        event.preventDefault();
-        //timestamp ricetta
-        var timestamp = Date.now();
-        web3.eth.getAccounts(function(error,accounts) {
-            if(error) console.log(error);
-            var account = accounts[0];
-            App.contract.deployed().then(function(instance) {
-                return instance.getLastId.call();
-            }).then(function(lastid) {
-                var nre = parseInt(lastid.toString()) + 1;
-                data = data + '&nre=' + nre;
-                App.contract.deployed().then(function(instance) {
-                    return instance.getMedico.call();
-                }).then(function(medico) {
-                    data = data + '&nome-medico='+medico[0]+ '&cognome-medico='+medico[1]+'&ts='+timestamp;
-                    console.log(data);
-                    var hashedData = web3.sha3(data);
-                    console.log(hashedData);
-                    App.contract.deployed().then(function(instance){
-                        return instance.setRicetta(App.enumStati.NONEROGATO, nre - 1,hashedData, {from: account});
-                    });
+    
+    medic: function() {
+        $.get("/nre", function(nre) {
+            $("#nre").val(nre); // una stringa di 10 caratteri generata dal server
+        });
+        $("#data").val(new Date());
+        App.instance.getName.call({from: App.account}).then(function(medico) {
+            $("#nome-medico").val(medico[0] + " " + medico[1]);
+            $("#acc-medico").val(App.account);
+        });
+        $("#ricetta").submit(function(event) {
+            event.preventDefault();
+            $("#data").val(Date.parse($("#data").val()));
+            var serial = $(this).serialize();
+            console.log(serial);
+            var hash = web3.sha3(serial);
+            var nre = parseInt($("#nre").val(), 36); // sotto forma di numero (48 bit)
+            console.log(nre);
+            console.log(hash);
+            App.instance.insRicetta(nre, web3.fromAscii(hash), {from: App.account}).then(function() { // ci vuole fromAscii per scriverlo bene, e toAscii per leggerlo bene
+                $.post("/pdf/" + $("#nre").val(), serial, function(pdf) {
+                    printJS(pdf); // Firefox lo apre in una nuova tab, Chrome in un iframe
                 });
             });
         });

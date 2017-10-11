@@ -1,58 +1,60 @@
 pragma solidity ^0.4.15;
 
 contract Prescriptions {
-	struct InfoMedico {
-		string name;
-		string surname;
-	}
-	enum StatiRicetta {
-        INVALIDO, // 0
-        NONEROGATO, // 1
-        EROGATO // 2
-    }
     enum Ruoli {
-        NONE, // 0
+        NULL, // 0
         ADMIN, // 1
         FARMA, // 2
         MEDICO // 3
     }
 
+	struct InfoAccount {
+		string f1;
+		string f2;
+        Ruoli ruolo;
+	}
+    struct Ricetta {
+        address medico;
+        bytes32 sha3;
+        address farma; // conta anche come stato ricetta
+    }
+
+    modifier onlyAdmin {
+        require(accounts[msg.sender].ruolo == Ruoli.ADMIN);
+        _;
+    }
     modifier onlyFarma {
-        require(roles[msg.sender] == Ruoli.FARMA);
+        require(accounts[msg.sender].ruolo == Ruoli.FARMA);
         _;
     }
     modifier onlyMedico {
-        require(roles[msg.sender] == Ruoli.MEDICO);
+        require(accounts[msg.sender].ruolo == Ruoli.MEDICO);
         _;
     }
 
-	bytes32[] ricette; // array di (SHA3 delle) ricette
-	mapping(address => Ruoli) internal roles; // mapping utente-ruoli
-	mapping(address => InfoMedico) internal medici; // mapping accounts-anagrafica
-	mapping(bytes32 => StatiRicetta) internal stati; //mapping ricette-stati
+	mapping(uint48 => Ricetta) private ricette; // mapping nre(6 bytes)-ricette
+	mapping(address => InfoAccount) private accounts; // mapping accounts-anagrafica
 	
-    function getLastId() public constant returns(uint) {
-		return ricette.length;
+    function Prescriptions() public { // setta accounts[0] admin al momento del deploy su bc
+        accounts[msg.sender] = InfoAccount("Admin", "Admin", Ruoli.ADMIN);
+    }
+    function getName() public constant returns(string, string) {
+		return (accounts[msg.sender].f1, accounts[msg.sender].f2);
 	}
-    function getMedico() public constant returns(string, string) {
-		return (medici[msg.sender].name, medici[msg.sender].surname);
-	}
+    function getRicetta(uint48 nre) public constant returns(address, bytes32, address) {
+        return (ricette[nre].medico, ricette[nre].sha3, ricette[nre].farma);
+    }
 	function getRole() public constant returns(Ruoli) {
-		return roles[msg.sender];
+		return accounts[msg.sender].ruolo;
 	}
-	function setMedico(string nome, string cognome, uint8 role) public {
-		medici[msg.sender] = InfoMedico({
-			name : nome,
-			surname : cognome
-		});
-		roles[msg.sender] = Ruoli(role);
+	function setAccount(string nome, string cognome, uint8 role) public onlyAdmin {
+		accounts[msg.sender] = InfoAccount(nome, cognome, Ruoli(role));
 	}
-    function setRicetta(uint8 stato, uint nre, bytes32 ricetta) public {
-		ricette.push(ricetta);
-        setStatoRicetta(stato, nre);
+    function insRicetta(uint48 nre, bytes32 hash) public onlyMedico {
+		ricette[nre] = Ricetta(msg.sender, hash, 0x0);
 	}
-	function setStatoRicetta(uint8 stato, uint nre) public {
-		stati[ricette[nre]] = StatiRicetta(stato);
+	function erogaRicetta(uint48 nre) public onlyFarma {
+		ricette[nre].farma = msg.sender;
 	}
 	function() external payable {} // funzione fallback (sink ether)
 }
