@@ -1,0 +1,36 @@
+.gly-spin {
+    -webkit-animation: spin 2000ms infinite linear;
+    -moz-animation: spin 2000ms infinite linear;
+    animation: spin 2000ms infinite linear;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+legend {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.container {
+    margin-top: 8em;
+    width: 90%;
+}

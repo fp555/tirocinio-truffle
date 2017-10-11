@@ -1,57 +1,60 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.15;
 
 contract Prescriptions {
+    enum Ruoli {
+        NULL, // 0
+        ADMIN, // 1
+        FARMA, // 2
+        MEDICO // 3
+    }
 
-	struct InfoMedico {
-		string name;
-		string surname;
+	struct InfoAccount {
+		string f1;
+		string f2;
+        Ruoli ruolo;
 	}
+    struct Ricetta {
+        address medico;
+        bytes32 sha3;
+        address farma; // conta anche come stato ricetta
+    }
 
-	//stati ricetta
-	enum StatiRicetta {nonErogato,parzErogato,erogato}
+    modifier onlyAdmin {
+        require(accounts[msg.sender].ruolo == Ruoli.ADMIN);
+        _;
+    }
+    modifier onlyFarma {
+        require(accounts[msg.sender].ruolo == Ruoli.FARMA);
+        _;
+    }
+    modifier onlyMedico {
+        require(accounts[msg.sender].ruolo == Ruoli.MEDICO);
+        _;
+    }
 
-	bytes32[] ricette;
-
-	//mapping utente-ruoli
-	mapping (address => string) internal roles ;
-
-	//mapping accounts-anagrafica
-	mapping (address => InfoMedico) internal medici;
+	mapping(uint48 => Ricetta) private ricette; // mapping nre(6 bytes)-ricette
+	mapping(address => InfoAccount) private accounts; // mapping accounts-anagrafica
 	
-	//mapping ricette-stati
-	mapping (bytes32 => StatiRicetta) internal stati;
-	
-
-	function getRole() public returns (string) {
-		return roles[msg.sender];
+    function Prescriptions() public { // setta accounts[0] admin al momento del deploy su bc
+        accounts[msg.sender] = InfoAccount("Admin", "Admin", Ruoli.ADMIN);
+    }
+    function getName() public constant returns(string, string) {
+		return (accounts[msg.sender].f1, accounts[msg.sender].f2);
 	}
-
-	function setMedico(string nome, string cognome, string role) public {
-		medici[msg.sender] = InfoMedico({
-			name : nome,
-			surname : cognome
-			});
-		roles[msg.sender] = role;
+    function getRicetta(uint48 nre) public constant returns(address, bytes32, address) {
+        return (ricette[nre].medico, ricette[nre].sha3, ricette[nre].farma);
+    }
+	function getRole() public constant returns(Ruoli) {
+		return accounts[msg.sender].ruolo;
 	}
-
-	function getMedico() public returns (string, string) {
-		return (medici[msg.sender].name, medici[msg.sender].surname);
+	function setAccount(string nome, string cognome, uint8 role) public onlyAdmin {
+		accounts[msg.sender] = InfoAccount(nome, cognome, Ruoli(role));
 	}
-
-	//prende ultima ricetta inserita
-	function getLastId() public returns (uint nre) {
-		nre = ricette.length;
+    function insRicetta(uint48 nre, bytes32 hash) public onlyMedico {
+		ricette[nre] = Ricetta(msg.sender, hash, 0x0);
 	}
-
-    //setta solo lo stato di una ricetta
-	function setStatoRicetta(uint8 stato, uint nre) public {
-		stati[ricette[nre]] = StatiRicetta(stato);
+	function erogaRicetta(uint48 nre) public onlyFarma {
+		ricette[nre].farma = msg.sender;
 	}
-	
-	//3 parametri: inserisce una nuova ricetta più il suo stato
-	function setRicetta(uint8 stato, uint nre, bytes32 ricetta) public {
-		ricette.push(ricetta);
-        setStatoRicetta(stato, nre);
-	}
-	
+	function() external payable {} // funzione fallback (sink ether)
 }

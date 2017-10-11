@@ -1,35 +1,37 @@
 {
-    "name": "tirocinio_truffle",
-    "version": "1.0.0",
-    "description": "App truffle tirocinio",
-    "main": "truffle.js",
-    "directories": {
-        "test": "test"
-    },
+    "name": "tirocinio",
+    "version": "0.2.1",
+    "description": "App tirocinio ricetta bianca dematerializzata",
     "scripts": {
-        "dev": "echo \"Sei Claudio? Usa 'npm run devc'; Fabio ha 'npm run devf'\"",
-        "devc": "truffle compile; truffle migrate --network quorum; lite-server",
-        "devf": "truffle compile; truffle migrate --network testrpc; lite-server",
-        "test": "truffle test --network testrpc"
+        "dev": "truffle compile && truffle migrate --network testrpc && NODE_ENV=development node server.js",
+        "devq": "truffle compile && truffle migrate --network quorum && NODE_ENV=development node server.js",
+        "postinstall": "cp -f node_modules/bootstrap/dist/css/bootstrap.min.css www/css/bootstrap.min.css && cp -f node_modules/jquery/dist/jquery.min.js www/js/jquery.min.js && cp -f node_modules/bootstrap/dist/js/bootstrap.min.js www/js/bootstrap.min.js && cp -f node_modules/web3/dist/web3.min.js www/js/web3.min.js && cp -f node_modules/truffle-contract/dist/truffle-contract.min.js www/js/truffle-contract.min.js && cp -f node_modules/socket.io-client/dist/socket.io.js www/js/socket.io.js && cp -f node_modules/print-js/dist/print.min.js www/js/print.min.js",
+        "test": "truffle test --network testrpc",
+        "testq": "truffle test --network quorum",
+        "testrpc": "testrpc --db './build/testrpc/' -m 'ranch predict scissors flock present suffer organ infant dragon sheriff lazy weird'"
     },
-    "author": "fabiop.",
-    "license": "null",
+    "author": "fp555",
     "dependencies": {
-        "truffle": "^3.4.5"
+        "body-parser": "^1.18.2",
+        "bootstrap": "^3.3.7",
+        "express": "^4.15.3",
+        "helmet": "^3.8.1",
+        "jquery": "^3.2.1",
+        "pdfkit": "^0.8.3",
+        "print-js": "^1.0.20",
+        "truffle-contract": "^2.0.5",
+        "web3": "^0.20.1"
     },
     "devDependencies": {
-        "lite-server": "^2.3.0"
-    },
-    "optionalDependencies": {
-        "ethereumjs-testrpc": "^4.0.1"
+        "chokidar": "^1.7.0",
+        "ethereumjs-testrpc": "^4.1.1",
+        "socket.io": "^2.0.3",
+        "socket.io-client": "^2.0.3",
+        "truffle": "^3.4.7"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/petroccoC/tirocinio_truffle.git"
     },
-    "bugs": {
-        "url": "https://github.com/petroccoC/tirocinio_truffle/issues"
-    },
-    "homepage": "https://github.com/petroccoC/tirocinio_truffle#readme",
     "private": true
 }
