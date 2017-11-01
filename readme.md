@@ -6,8 +6,8 @@ cd tirocinio_truffle
 npm install --no-optional
 ```
 ## Avvio (development)
-1. Per la versione Ethereum, in 2 terminali diversi:
-  * `npm run testrpc`
-  * `npm run dev` per la versione Ethereum (testrpc)
-2. Per la versione Quorum, dopo aver lanciato `vagrant ssh` sul container:
-  * `npm run devq`
+* Per la versione Ethereum, in 2 terminali diversi:
+    1. `npm run testrpc`
+    2. `npm run dev` per la versione Ethereum (testrpc)
+* Per la versione Quorum, dopo aver lanciato `vagrant ssh` sul container:
+    1. `npm run devq`

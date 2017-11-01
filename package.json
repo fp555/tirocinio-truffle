@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "truffle compile && truffle migrate --network testrpc && NODE_ENV=development node server.js",
     "devq": "truffle compile && truffle migrate --network quorum && NODE_ENV=development node server.js",
-    "postinstall": "cp -f node_modules/bootstrap/dist/css/bootstrap.min.css www/css/bootstrap.min.css && cp -f node_modules/jquery/dist/jquery.min.js www/js/jquery.min.js && cp -f node_modules/bootstrap/dist/js/bootstrap.min.js www/js/bootstrap.min.js && cp -f node_modules/web3/dist/web3.min.js www/js/web3.min.js && cp -f node_modules/truffle-contract/dist/truffle-contract.min.js www/js/truffle-contract.min.js && cp -f node_modules/socket.io-client/dist/socket.io.js www/js/socket.io.js && cp -f node_modules/print-js/dist/print.min.js www/js/print.min.js && cp -f node_modules/jsqr/dist/jsQR.js www/js/jsQR.js",
+    "postinstall": "cp -f node_modules/bootstrap/dist/css/bootstrap.min.css www/css/bootstrap.min.css && cp -f node_modules/jquery/dist/jquery.min.js www/js/lib/jquery.min.js && cp -f node_modules/bootstrap/dist/js/bootstrap.min.js www/js/lib/bootstrap.min.js && cp -f node_modules/web3/dist/web3.min.js www/js/lib/web3.min.js && cp -f node_modules/truffle-contract/dist/truffle-contract.min.js www/js/lib/truffle-contract.min.js && cp -f node_modules/socket.io-client/dist/socket.io.js www/js/lib/socket.io.js && cp -f node_modules/print-js/dist/print.min.js www/js/lib/print.min.js && cp -f node_modules/jsqr/dist/jsQR.js www/js/lib/jsQR.js",
     "test": "truffle test --network testrpc",
     "testq": "truffle test --network quorum",
     "testrpc": "testrpc --db './build/testrpc/' -m 'ranch predict scissors flock present suffer organ infant dragon sheriff lazy weird'"

@@ -4,13 +4,10 @@ var server = require('http').createServer(app); // in production dovrebbe divent
 var helmet = require('helmet');
 var bodyParser = require('body-parser');
 var pdf = require('pdfkit');
-var qr = require('qr-image');
+var QRCode = require('qrcode')
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
-
-var QRCode = require('qrcode')
-
 
 // livereload (per il browser) tramite websocket solo in dev
 if(process.env.NODE_ENV === 'development') {
@@ -50,20 +47,16 @@ app.get('/nre', function(req, res) {
 });
 app.post('/pdf/:nre', function(req, res) {
     var percorso = path.join(__dirname, '/www/pdf/' + req.params.nre + '.pdf');
+    var qrstream = fs.createWriteStream(path.join(__dirname, '/www/pdf/qr.png'));
     var doc = new pdf({
         size: 'B6'
     });
-    console.log(JSON.stringify(req.body));
-    // setto subito gli header della risposta
-    //res.setHeader('Content-type', 'application/pdf');
-    //res.setHeader('Content-disposition', 'inline; filename=' + req.params.nre + '.pdf');
     // creo il qrcode
-    QRCode.toFile(path.join(__dirname, '/www/pdf/qr.PNG'), JSON.stringify(req.body), function(error){
-        if (error) throw error;
+    qrstream.on('open', function() {
+        QRCode.toFileStream(qrstream, JSON.stringify(req.body));
+        console.log(qrstream.path);
+        var qr_png = doc.openImage(qrstream.path);
     });
-    var perco = path.join(__dirname, '/www/pdf/qr');
-    console.log(perco);
-    var qr_png = doc.openImage(perco + '.png');
     //creo il pdf
     doc.pipe(fs.createWriteStream(percorso));
     doc.fontSize(20).text("Ricetta medica", qr_png.width - 20, (qr_png.height / 2), {
@@ -73,8 +66,8 @@ app.post('/pdf/:nre', function(req, res) {
         valign: 'top'
     }).moveDown();
     doc.font('Times-Bold', 10).text("Medico: ", 50, 150, {
-        align: 'left', 
-        continued: true, 
+        align: 'left',
+        continued: true,
         width: doc.page.width - 50}).font('Courier').text(req.body['nome-medico']).moveDown();
     doc.font('Times-Bold', 10).text("Account medico: ", {continued: true});
     doc.font('Courier').text(req.body['acc-medico']).moveDown();
@@ -88,9 +81,7 @@ app.post('/pdf/:nre', function(req, res) {
     doc.font('Times-Bold', 10).text("Prescrizione: ");
     doc.font('Courier').text(req.body.prescriz);
     //inserisco qr_code
-    doc.image(qr_png, 0, 0, {
-        fit: [150, 150]
-    });
+    doc.image(qr_png, 0, 0, {fit: [150, 150]});
     doc.save();
     doc.end();
     var filename = req.params.nre + '.pdf';
