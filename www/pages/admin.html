@@ -1,5 +1,8 @@
 <form class="form-signin" id="form-medico">
     <h2 class="form-signin-heading">Perfavore esegui registrazione</h2>
+        <select class="form-control" id="accountselect" style="margin-bottom: 10px">Account
+            <option value="" hidden>--Selezionare l'account--</option>
+        </select>
         <select class="form-control" id="roleselect">Ruolo
             <option value="" selected>--Selezionare il ruolo--</option>
             <option value=2>Farmacista</option>
@@ -13,19 +16,3 @@
             <button class="btn btn-lg btn-primary btn-block" type="button" id="registra">Registra</button>
         </div>
 </form>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#roleselect").change(function() {
-            $(".form-group").css('visibility', ($("#roleselect").val() === "")? 'hidden' : 'visible');
-        });
-    });
-
-    $("#registra").click(function(event) {
-        event.preventDefault();
-        App.registra({
-            nome : $("#nome").val(),
-            cognome : $("#cognome").val(),
-            ruolo : $("#roleselect").val()
-        });
-    });
-</script>

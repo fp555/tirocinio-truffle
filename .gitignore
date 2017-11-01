@@ -56,3 +56,9 @@ typings/
 
 # artefatti di compilazione contratti solidity
 build/
+
+# niente pdf temporanei generati
+www/pdf/
+
+www/js/*
+!www/js/client.js

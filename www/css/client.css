@@ -34,3 +34,12 @@ legend {
     margin-top: 8em;
     width: 90%;
 }
+
+.btn-creation {
+    margin-top: 10px;
+    width: -webkit-fill-available;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.3333333;
+    border-radius: 6px;
+}

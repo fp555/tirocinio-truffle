@@ -31,6 +31,7 @@ App = {
         web3.eth.getAccounts(function(error,accounts) {
             if(error) console.log(error);
             else {
+                console.log(accounts);
                 App.account = accounts[0]; // cambia 0 con un altro numero per fare prove multiaccount senza MetaMask
                 App.checkRole();
             }
@@ -41,23 +42,51 @@ App = {
         App.contract.deployed().then(function(instance) {
             instance.getRole.call({from: App.account}).then(function(r) {
                 var role = parseInt(r.toString());
-                console.log(App.enumRuoli[role]);
-                $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {
+                console.log("enumrole", App.enumRuoli[role]);
+                $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {            
                     App[App.enumRuoli[role]](); // lo so che non è una cosa bella, ma eval è peggio
                 });
             });
         });
     },
+
+    admin: function() {
+        $("#roleselect").change(function() {
+            $(".form-group").css('visibility', ($("#roleselect").val() === "")? 'hidden' : 'visible');
+        });
+
+        //popolo la select dell'admin con gli account presenti sulla blockchain
+        web3.eth.getAccounts(function(error,accounts) {
+            if(error) console.log(error);
+            $.each(accounts, function(key, value) { 
+                $('#accountselect').append($('<option>', { value : value }).text(value)); 
+            });
+        });
+
+        $("#registra").click(function(event) {
+            event.preventDefault();
+            App.registra({
+                nome : $("#nome").val(),
+                cognome : $("#cognome").val(),
+                ruolo : $("#roleselect").val(),
+                account: $("#accountselect").val()
+            });
+        });
+    },
     
     registra: function(form) {
+        console.log(form);
         App.contract.deployed().then(function(instance) {
-            App.instance.setAccount(form.nome, form.cognome, form.ruolo, {from: App.account}).then(function() {
+            console.log(instance);
+            App.instance.setAccount(form.account, form.nome, form.cognome, form.ruolo, {from: App.account}).then(function() {
                 App.checkRole();
             });
         });
     },
     
     medic: function() {
+        $("#show").css("display","none");
+        $("#new").css("display","none");
         $.get("/nre", function(nre) {
             $("#nre").val(nre); // una stringa di 10 caratteri generata dal server
         });
@@ -68,17 +97,35 @@ App = {
         });
         $("#ricetta").submit(function(event) {
             event.preventDefault();
+            //disabilito il tasto submit
+            $("#crea").addClass('disabled');
             $("#data").val(Date.parse($("#data").val()));
-            var serial = $(this).serialize();
-            console.log(serial);
-            var hash = web3.sha3(serial);
+            //serializzo il contenuto della form in un oggetto json
+            var array = jQuery(this).serializeArray();
+            var json = {};
+    
+            jQuery.each(array, function() {
+                json[this.name] = this.value || '';
+            });
+            console.log("JSON.stringify(json)", JSON.stringify(json));
+            var hash = web3.sha3(JSON.stringify(json));
+            console.log("hash", hash);
             var nre = parseInt($("#nre").val(), 36); // sotto forma di numero (48 bit)
-            console.log(nre);
-            console.log(hash);
             App.instance.insRicetta(nre, web3.fromAscii(hash), {from: App.account}).then(function() { // ci vuole fromAscii per scriverlo bene, e toAscii per leggerlo bene
-                $.post("/pdf/" + $("#nre").val(), serial, function(pdf) {
-                    printJS(pdf); // Firefox lo apre in una nuova tab, Chrome in un iframe
-                });
+                $.post("/pdf/" + $("#nre").val(), json, function(data) {
+                    printJS(data.pdf);// Firefox lo apre in una nuova tab, Chrome in un iframe
+                    //mostro i bottoni e aggancio i relativi eventi
+                    $("#show").css("display","inline");
+                    $("#show").on('click', function(event) {
+                        event.preventDefault();
+                        printJS(data.pdf);
+                    });
+                    $("#new").css("display","inline");
+                    $("#new").on('click', function(event) {
+                        event.preventDefault();
+                        location.reload();
+                    });
+                }, "json");
             });
         });
     }

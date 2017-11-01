@@ -47,8 +47,8 @@ contract Prescriptions {
 	function getRole() public constant returns(Ruoli) {
 		return accounts[msg.sender].ruolo;
 	}
-	function setAccount(string nome, string cognome, uint8 role) public onlyAdmin {
-		accounts[msg.sender] = InfoAccount(nome, cognome, Ruoli(role));
+	function setAccount(address acc, string nome, string cognome, uint8 role) public onlyAdmin {
+		accounts[acc] = InfoAccount(nome, cognome, Ruoli(role));
 	}
     function insRicetta(uint48 nre, bytes32 hash) public onlyMedico {
 		ricette[nre] = Ricetta(msg.sender, hash, 0x0);
