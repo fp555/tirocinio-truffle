@@ -2,6 +2,7 @@ App = {
     account: {}, // account che interagisce con il contratto
     contract: {}, // contratto truffle
     instance: {}, // istanza smart contract su bc
+    timer: {}, // timer per controllo cambio account
     enumRuoli: ["guest", "admin", "farma", "medic"],
     enumStati: {
         INVALIDO: 0,
@@ -28,21 +29,28 @@ App = {
             });
         });
         // set account da utilizzare
-        web3.eth.getAccounts(function(error,accounts) {
+        web3.eth.getAccounts(function(error, accounts) {
             if(error) console.log(error);
             else {
-                console.log(accounts);
                 App.account = accounts[0]; // cambia 0 con un altro numero per fare prove multiaccount senza MetaMask
                 App.checkRole();
             }
         });
+        // controllo se cambia l'account in background (Metamask)
+        App.timer = setInterval(function() {
+            web3.eth.getAccounts(function(error, accounts) {
+                if(accounts[0] != App.account) {
+                    App.account = accounts[0];
+                    window.location.reload();
+                }
+            });
+        }, 1000); // ogni secondo
     },
     
     checkRole: function() {
         App.contract.deployed().then(function(instance) {
             instance.getRole.call({from: App.account}).then(function(r) {
                 var role = parseInt(r.toString());
-                console.log("enumrole", App.enumRuoli[role]);
                 $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {
                     App[App.enumRuoli[role]](); // lo so che non è una cosa bella, ma eval è peggio
                 });
@@ -54,15 +62,13 @@ App = {
         $("#roleselect").change(function() {
             $(".form-group").css('visibility', ($("#roleselect").val() === "")? 'hidden' : 'visible');
         });
-
         //popolo la select dell'admin con gli account presenti sulla blockchain
-        web3.eth.getAccounts(function(error,accounts) {
+        /*web3.eth.getAccounts(function(error,accounts) {
             if(error) console.log(error);
             $.each(accounts, function(key, value) {
                 $('#accountselect').append($('<option>', { value : value }).text(value));
             });
-        });
-
+        });*/
         $("#registra").click(function(event) {
             event.preventDefault();
             App.registra({
@@ -102,7 +108,6 @@ App = {
             //serializzo il contenuto della form in un oggetto json
             var array = jQuery(this).serializeArray();
             var json = {};
-    
             jQuery.each(array, function() {
                 json[this.name] = this.value || '';
             });
@@ -168,7 +173,7 @@ App = {
                     var hash = web3.sha3(decoded); // ricreo l'hash che devo cercare sulla blockchain (è uguale a quello generato lato medico)
                 
                     console.log(hash);
-                    App.instance.getRicetta.call(parseInt(ricetta.nre, 36), {from: App.account}).then(function(data) { 
+                    App.instance.getRicetta.call(parseInt(ricetta.nre, 36), {from: App.account}).then(function(data) {
                         // data contiene acount medico prescrittore, hash, stato ricetta
                         console.log(data);
                         var valida = hash === data[1];
@@ -177,8 +182,8 @@ App = {
                         $("#stato").text(erogata ? "Erogata" : "Non erogata");
                         $(".jumbotron").css("display", "block");
                     
-                        //verde(valida e non erogata), rossa(non valida e erogata), giallo(non erogata e non valida), 
-                        $(".jumbotron").css("background-color", (valida && !erogata) ? "#dff0d8" : ((!valida && erogata) ? "#f2dede" : "#fcf8e3")); 
+                        //verde(valida e non erogata), rossa(non valida e erogata), giallo(non erogata e non valida),
+                        $(".jumbotron").css("background-color", (valida && !erogata) ? "#dff0d8" : ((!valida && erogata) ? "#f2dede" : "#fcf8e3"));
                         $("#validation").text(valida ? (!erogata ? "Ricetta EROGABILE" : "Ricetta GIÀ EROGATA") : "Ricetta NON VALIDA");
                         $("#validationMsg").text(valida ? (!erogata ? "È possibile erogare la ricetta" : "Ricetta già erogata in un'altra farmacia") : "Ricetta contraffatta, non erogare");
                         $("#validationBtn").text(valida && !erogata ? "Eroga" : "Annulla");
@@ -192,21 +197,19 @@ App = {
                                         window.location.reload();
                                     });
                                 });
-                            } 
+                            }
                             else window.location.reload();
                         });
                     });
                 localStream.stop();
-                } 
+                }
             }
             requestAnimationFrame(scan); // loop scansione
         };
         requestAnimationFrame(scan);
     },
 
-    guest: function() {
-        //TO-DO
-    }
+    guest: function() {} // per il momento il guest non fa niente
 };
 
 $(function() { // equivale a $(document).ready()
