@@ -1,137 +1,60 @@
-<!-- <html>
-<head>
-	<meta charset="UTF-8">
-	<title>jsQR</title>
-	<script src="js/jsQR.js"></script>
-</head>
-<body style="text-align:center;">
-	<h1 style="margin: 10px;">jsQR</h1>
-	<div>
-		<video id="video" autoplay="true" style="display:none;"></video>
+<div class="row">
+	<div class="col-xs-6">
+		<video id="video" autoplay="true"></video>
 		<canvas id="canvas" style="width:640px; height:480px;"></canvas>
+		<div class="jumbotron">
+			<h2 id="validation"></h2>
+			<p id="validationMsg"></p>
+			<a class="btn btn-primary btn-lg" id="validationBtn" role="button" data-toggle="modal" data-target="#myModal"></a>
+		</div>
 	</div>
-	<script>
-		var video = document.getElementById("video");
-		var canvas = document.getElementById("canvas");
-		var context = canvas.getContext("2d");
-		var width = parseInt(canvas.style.width);
-		var height = parseInt(canvas.style.height);
-		canvas.width = width;
-		canvas.height = height;
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-		if (navigator.getUserMedia){
-			function successCallback(stream){
-				if (window.webkitURL) {
-					video.src = window.webkitURL.createObjectURL(stream);
-				} else if (video.mozSrcObject !== undefined) {
-					video.mozSrcObject = stream;
-				} else {
-					video.src = stream;
-				}
-			}
-			function errorCallback(){}
-			navigator.getUserMedia({video: true}, successCallback, errorCallback);
-			requestAnimationFrame(tick);
-		}
-		function tick(){
-			requestAnimationFrame(tick);
-			if (video.readyState === video.HAVE_ENOUGH_DATA){
-        // Load the video onto the canvas
-        context.drawImage(video, 0, 0, width, height);
-        // Load the image data from the canvas
-        var imageData = context.getImageData(0, 0, width, height);
-        var decoded = jsQR.decodeQRFromImage(imageData.data, imageData.width, imageData.height);
-        if(decoded) {
-        	alert(decoded);
-        }
-    }
-}
-</script>
-</body>
-</html> -->
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>jsQR</title>
-  <script src="js/jsQR.js"></script>
-</head>
-<body style="text-align:center;">
-  <h1 style="margin: 10px;">jsQR</h1>
-  <div>
-    <video id="video" autoplay="true" style="display:none;"></video>
-    <canvas id="canvas" style="width:640px; height:480px;"></canvas>
+	<div class="col-xs-6">
+		<table class="table">
+			<tbody>
+				<tr>
+					<th scope="row">NRE</th>
+					<td id="nre"></td>
+				</tr>
+				<tr>
+					<th scope="row">Data</th>
+					<td id="data"></td>
+				</tr>
+				<tr>
+					<th scope="row">Medico</th>
+					<td id="medico"></td>
+				</tr>
+				<tr>
+					<th scope="row">Paziente</th>
+					<td id="paziente"></td>
+				</tr>
+				<tr>
+					<th scope="row">Prescrizione</th>
+					<td id="prescrizione"></td>
+				</tr>
+				<tr>
+					<th scope="row">Stato Ricetta</th>
+					<td id="stato"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Ricetta Erogata</h4>
+        </div>
+        <div class="modal-body">
+          <p>Ricetta erogata con successo</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <input type="checkbox" id="checkbox" checked /> Highlight QR Location
-  <div id="result"></div>
-  <script>
-    var video = document.getElementById("video");
-    var resultDiv = document.getElementById("result");
-    var canvas = document.getElementById("canvas");
-    var context = canvas.getContext("2d");
-    var checkbox = document.getElementById("checkbox");
-
-    var width = parseInt(canvas.style.width);
-    var height = parseInt(canvas.style.height);
-    canvas.width = width;
-    canvas.height = height;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    if (navigator.getUserMedia){
-      function successCallback(stream){
-        if (window.webkitURL) {
-          video.src = window.webkitURL.createObjectURL(stream);
-        } else if (video.mozSrcObject !== undefined) {
-          video.mozSrcObject = stream;
-        } else {
-          video.src = stream;
-        }
-      }
-      function errorCallback(){}
-      navigator.getUserMedia({video: true}, successCallback, errorCallback);
-      requestAnimationFrame(tick);
-    }
-
-    function tick(){
-      requestAnimationFrame(tick);
-      if (video.readyState === video.HAVE_ENOUGH_DATA){
-        // Load the video onto the canvas
-        context.drawImage(video, 0, 0, width, height);
-        // Load the image data from the canvas
-        var imageData = context.getImageData(0, 0, width, height);
-        if (checkbox.checked) { // We want to extract the location of the QR code, so use the seperate functions
-          var binarizedImage = jsQR.binarizeImage(imageData.data, imageData.width, imageData.height);
-          var location = jsQR.locateQRInBinaryImage(binarizedImage);
-          if(!location){
-            resultDiv.innerHTML = "<div style='color: red; margin:15px;'>No QR Decoded</div>";
-            return;
-          }
-          var rawQR = jsQR.extractQRFromBinaryImage(binarizedImage, location);
-          if (!rawQR) {
-            resultDiv.innerHTML = "<div style='color: red; margin:15px;'>No QR Decoded</div>";
-            return;
-          }
-          decoded = jsQR.decodeQR(rawQR)
-          if(decoded) {
-            resultDiv.innerHTML = "<div style='color: green; margin:15px;'>QR Decoded! <span style='color: #000;'>"+decoded+"</span></div>"
-            context.beginPath();
-            context.moveTo(location.bottomLeft.x, location.bottomLeft.y);
-            context.lineTo(location.topLeft.x, location.topLeft.y);
-            context.lineTo(location.topRight.x, location.topRight.y);
-            context.lineWidth = 8;
-            context.strokeStyle = "green";
-            context.stroke();
-          } else {
-            resultDiv.innerHTML = "<div style='color: red; margin:15px;'>No QR Decoded</div>"
-          }
-        } else { // We just want to parse the QR code, so we can use the wrapper function
-          var decoded = jsQR.decodeQRFromImage(imageData.data, imageData.width, imageData.height);
-          if(decoded) {
-            resultDiv.innerHTML = "<div style='color: green; margin:15px;'>QR Decoded! <span style='color: #000;'>"+decoded+"</span></div>"
-          } else {
-            resultDiv.innerHTML = "<div style='color: red; margin:15px;'>No QR Decoded</div>"
-          }
-        }
-      }
-    }
-  </script>
-</body>
-</html>
+</div>
+<script src="js/lib/jsQR.js"></script>

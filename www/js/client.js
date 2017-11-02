@@ -77,7 +77,6 @@ App = {
     registra: function(form) {
         console.log(form);
         App.contract.deployed().then(function(instance) {
-            console.log(instance);
             App.instance.setAccount(form.account, form.nome, form.cognome, form.ruolo, {from: App.account}).then(function() {
                 App.checkRole();
             });
@@ -110,8 +109,9 @@ App = {
             console.log("JSON.stringify(json)", JSON.stringify(json));
             var hash = web3.sha3(JSON.stringify(json));
             console.log("hash", hash);
-            var nre = parseInt($("#nre").val(), 36); // sotto forma di numero (48 bit)
-            App.instance.insRicetta(nre, web3.fromAscii(hash), {from: App.account}).then(function() { // ci vuole fromAscii per scriverlo bene, e toAscii per leggerlo bene
+            console.log("web3.fromAscii(hash)", web3.fromAscii(hash));
+            var nre = parseInt($("#nre").val(), 36); // sotto forma di numero (48 bit)  web3.fromAscii(hash)
+            App.instance.insRicetta(nre, hash, {from: App.account}).then(function() { // ci vuole fromAscii per scriverlo bene, e toAscii per leggerlo bene
                 $.post("/pdf/" + $("#nre").val(), json, function(data) {
                     //mostro i bottoni e aggancio i relativi eventi
                     $("#show").css("display","inline");
@@ -128,6 +128,84 @@ App = {
                 }, "json");
             });
         });
+    },
+
+    farma : function() {
+        var video = document.getElementById("video");
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        var width = parseInt(canvas.style.width);
+        var height = parseInt(canvas.style.height);
+        var localStream; // variabile che contiene stream video
+        // per la view del canvas
+        canvas.width = width;
+        canvas.height = height;
+        // accesso alla webcam
+        navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+            if (window.webkitURL) video.src = window.webkitURL.createObjectURL(stream);
+            else if (video.mozSrcObject !== undefined) video.mozSrcObject = stream;
+            else video.src = stream;
+            localStream = stream.getTracks()[0];
+        });
+        // callback per scan feed video
+        function scan() {
+            if(video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Load the video onto the canvas
+                context.drawImage(video, 0, 0, width, height);
+                // Load the image data from the canvas
+                var imageData = context.getImageData(0, 0, width, height);
+                var binarizedImage = jsQR.binarizeImage(imageData.data, imageData.width, imageData.height);
+                var location = jsQR.locateQRInBinaryImage(binarizedImage);
+                if(location) var rawQR = jsQR.extractQRFromBinaryImage(binarizedImage, location);
+                if(rawQR) var decoded = jsQR.decodeQR(rawQR);
+                if(decoded) {
+                    var ricetta = JSON.parse(decoded);
+                    $("#nre").text(ricetta.nre);
+                    $("#data").text(new Date(parseInt(ricetta.data)));
+                    $("#medico").text(ricetta["nome-medico"]);
+                    $("#paziente").text(ricetta["nome-paziente"] + " " + ricetta["cognome-paziente"]);
+                    $("#prescrizione").text(ricetta.prescriz);
+                    var hash = web3.sha3(decoded); // ricreo l'hash che devo cercare sulla blockchain (è uguale a quello generato lato medico)
+                
+                    console.log(hash);
+                    App.instance.getRicetta.call(parseInt(ricetta.nre, 36), {from: App.account}).then(function(data) { 
+                        // data contiene acount medico prescrittore, hash, stato ricetta
+                        console.log(data);
+                        var valida = hash === data[1];
+                        var erogata = data[2] != "0x0";
+                        console.log(erogata);
+                        $("#stato").text(erogata ? "Erogata" : "Non erogata");
+                        $(".jumbotron").css("display", "block");
+                    
+                        //verde(valida e non erogata), rossa(non valida e erogata), giallo(non erogata e non valida), 
+                        $(".jumbotron").css("background-color", (valida && !erogata) ? "#dff0d8" : ((!valida && erogata) ? "#f2dede" : "#fcf8e3")); 
+                        $("#validation").text(valida ? (!erogata ? "Ricetta EROGABILE" : "Ricetta GIÀ EROGATA") : "Ricetta NON VALIDA");
+                        $("#validationMsg").text(valida ? (!erogata ? "È possibile erogare la ricetta" : "Ricetta già erogata in un'altra farmacia") : "Ricetta contraffatta, non erogare");
+                        $("#validationBtn").text(valida && !erogata ? "Eroga" : "Annulla");
+                        $("#validationBtn").addClass(valida && !erogata ? "btn-success" : "btn-danger");
+                        $("#validationBtn").on('click', function(event) {
+                            event.preventDefault();
+                            if(valida && !erogata) {
+                                App.instance.erogaRicetta(parseInt(ricetta.nre, 36), {from: App.account}).then(function() {
+                                    $("#modal").click(function(event) {
+                                        event.preventDefault();
+                                        window.location.reload();
+                                    });
+                                });
+                            } 
+                            else window.location.reload();
+                        });
+                    });
+                localStream.stop();
+                } 
+            }
+            requestAnimationFrame(scan); // loop scansione
+        };
+        requestAnimationFrame(scan);
+    },
+
+    guest: function() {
+        //TO-DO
     }
 };
 

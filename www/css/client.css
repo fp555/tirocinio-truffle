@@ -37,9 +37,34 @@ legend {
 
 .btn-creation {
     margin-top: 10px;
-    width: -webkit-fill-available;
+    width: auto;
     padding: 10px 16px;
     font-size: 18px;
     line-height: 1.3333333;
     border-radius: 6px;
+}
+
+#video {
+    display: none;
+    width:auto; 
+    height:fit-content;
+}
+
+.table {
+    font-size: x-large;
+}
+
+td {
+    word-break: break-all;
+}
+
+div.jumbotron {
+    display: none;
+    margin: 20px 0px;
+    width: 640px;
+}
+
+div.jumbotron h2 {
+    font-size: 3.5em;
+    
 }
