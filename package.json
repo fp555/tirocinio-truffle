@@ -21,7 +21,7 @@
     "jsqr": "^0.2.2",
     "pdfkit": "^0.8.3",
     "print-js": "^1.0.20",
-    "qrcode": "^0.9.0",
+    "qr-image": "^3.2.0",
     "truffle-contract": "^2.0.5",
     "web3": "^0.20.1"
   },

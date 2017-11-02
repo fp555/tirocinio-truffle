@@ -43,7 +43,7 @@ App = {
             instance.getRole.call({from: App.account}).then(function(r) {
                 var role = parseInt(r.toString());
                 console.log("enumrole", App.enumRuoli[role]);
-                $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {            
+                $(".container").load('/pages/' + App.enumRuoli[role] + '.html', function() {
                     App[App.enumRuoli[role]](); // lo so che non è una cosa bella, ma eval è peggio
                 });
             });
@@ -58,8 +58,8 @@ App = {
         //popolo la select dell'admin con gli account presenti sulla blockchain
         web3.eth.getAccounts(function(error,accounts) {
             if(error) console.log(error);
-            $.each(accounts, function(key, value) { 
-                $('#accountselect').append($('<option>', { value : value }).text(value)); 
+            $.each(accounts, function(key, value) {
+                $('#accountselect').append($('<option>', { value : value }).text(value));
             });
         });
 
@@ -113,18 +113,18 @@ App = {
             var nre = parseInt($("#nre").val(), 36); // sotto forma di numero (48 bit)
             App.instance.insRicetta(nre, web3.fromAscii(hash), {from: App.account}).then(function() { // ci vuole fromAscii per scriverlo bene, e toAscii per leggerlo bene
                 $.post("/pdf/" + $("#nre").val(), json, function(data) {
-                    printJS(data.pdf);// Firefox lo apre in una nuova tab, Chrome in un iframe
                     //mostro i bottoni e aggancio i relativi eventi
                     $("#show").css("display","inline");
+                    $("#new").css("display","inline");
                     $("#show").on('click', function(event) {
                         event.preventDefault();
                         printJS(data.pdf);
                     });
-                    $("#new").css("display","inline");
                     $("#new").on('click', function(event) {
                         event.preventDefault();
                         location.reload();
                     });
+                    printJS(data.pdf);// Firefox lo apre in una nuova tab, Chrome in un iframe
                 }, "json");
             });
         });
