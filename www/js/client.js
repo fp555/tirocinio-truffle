@@ -177,7 +177,7 @@ App = {
                         // data contiene acount medico prescrittore, hash, stato ricetta
                         console.log(data);
                         var valida = hash === data[1];
-                        var erogata = data[2] != "0x0";
+                        var erogata = data[2] != "0x0000000000000000000000000000000000000000";
                         console.log(erogata);
                         $("#stato").text(erogata ? "Erogata" : "Non erogata");
                         $(".jumbotron").css("display", "block");
